@@ -1,17 +1,19 @@
 package com.example.currentWeather.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
+import java.util.Scanner;
 
 @Component
 public class Client {
-    @Autowired
-    private Environment environment;
+    private final Api api;
+
+    public Client(Api api) {
+        this.api = api;
+    }
 
     public void request() throws Exception {
-        String apiBaseUrl = environment.getProperty("api.baseUrl");
+        String apiBaseUrl = api.getBaseUrl();
 
         assert apiBaseUrl != null;
 
@@ -21,7 +23,7 @@ public class Client {
 
         System.out.println("Api base url " + apiBaseUrl);
 
-        String apiKey = environment.getProperty("api.key");
+        String apiKey = api.getKey();
 
         assert apiKey != null;
 
@@ -29,8 +31,13 @@ public class Client {
             throw new Exception("Please add the config for api key");
         }
 
-        String cityName = "";
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the city name : ");
 
-        String completeApiUri = apiBaseUrl + "app_id=" + apiKey + "&q=" + cityName;
+        String cityName = scanner.next();
+
+        String completeApiUri = "%s?app_id=%s&q=%s";
+
+        completeApiUri = String.format(completeApiUri, apiBaseUrl, apiKey, cityName);
     }
 }
